@@ -1,0 +1,19 @@
+body {
+	margin: 0;
+	padding: 0;
+	background: url("../img/bg.jpg");
+	background-position: center;
+	background-size: cover;
+	background-attachment: fixed;
+}
+
+.LINK div {
+	transition: all .2s ease;
+	transform-origin: left;
+	transform: scaleX(0);
+	width: 100%;
+}
+
+.LINK:hover > div {
+	transform: scaleX(1);
+}

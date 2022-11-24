@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title> sign-up for an account </title>
+	<script type="text/javascript" src="{{url_for('static', filename='Javascript/Tailwind/tailwind.js')}}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='Javascript/Tailwind/tailwind.config.js')}}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='Javascript/UtilScripts/Utils.js')}}"></script>
+	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/global.css')}}">
+
+</head>
+<body class="w-screen h-screen flex justify-center items-center font-mono">
+	<!-- 
+	Add Email, UserName, password
+	 -->
+	<form class="flex flex-row justify-between items-center w-11/12 sm:w-[650px] rounded-md shadow-subtle p-0">
+		<div class="flex flex-col w-[60%] justify-center p-3">
+			
+			<label class="my-2 w-full flex flex-col justify-center items-start">
+				Username
+				<input placeholder="John doe" class="focus:border-sky-500 py-2 px-2 w-full outline-none my-2 border-b border-sky-900" type="text" id="UserName">
+				<p class="validator text-red-600 text-sm font-normal"></p>
+			</label>
+
+			<label class="my-2 w-full flex flex-col justify-center items-start">
+				Email
+				<input placeholder="Email@mail.com" class="focus:border-sky-500 py-2 px-2 w-full outline-none my-2 border-b border-sky-900" type="email" id="Email">
+				<p class="validator text-red-600 text-sm font-normal"></p>
+			</label>
+
+			<label class="my-2 w-full flex flex-col justify-center items-start">
+				Password
+				<input placeholder="p6s7wo" class="focus:border-sky-500 py-2 px-2 w-full outline-none my-2 border-b border-sky-900" type="password" id="Password">
+				<p class="validator text-red-600 text-sm font-normal"></p>
+			</label>
+
+			<button id="subBtt" class="hover:bg-blue-900 transition-all Submit my-2 w-[100px] rounded border-box py-2 px-4 bg-black text-white hover:shadow-md">
+				Sign up
+			</button>
+		</div>
+
+		<img src="{{url_for('static', filename='img/sculp.jpg')}}" class="w-[250px] rounded-r-md" alt="Image">
+	</form>		
+	
+</body>
+
+<script type="text/javascript">
+	
+	const submitbtt = document.getElementById("subBtt");
+	const validators = document.getElementsByClassName("validator");
+	
+	const setErrorContent = (index, text) => validators[index].textContent = text;
+
+	submitbtt.onclick = (e) => {
+		e.preventDefault()
+		
+		var Problematics = [];
+		
+		const state = {
+			UserName: getInputValue("UserName"), //0
+			Email: getInputValue("Email"), //1
+			Password: getInputValue("Password") //2
+		};
+
+		Object.keys(state).map((k, i) => {
+			if(!state[k])
+				Problematics.push({index: i, errMsg: "This field can not be empty!"});
+		});
+
+		if(state.UserName.length < 3) {
+			const temp = {index: 0, errMsg: "user name should have more than 3 characters!"};
+			if(!(temp in Problematics) && Problematics[Problematics.length - 1] !== temp) {
+				
+				Problematics.push(temp)
+			}
+		}
+
+		if(state.Password.length < 8) {
+			const temp = {index: 2, errMsg: "only 6 character length is valid."};
+			if(!(temp in Problematics) && Problematics[Problematics.length - 1] !== temp) {
+				Problematics.push(temp)
+			}
+		}
+
+		if(Problematics.length === 0) {
+			
+			fetch("/signup", {
+				headers: {
+					"content-type": "application/json",
+				},
+				method: "POST",
+				body: JSON.stringify(state)
+			
+			}).then((res) => {
+				return res.json();
+			}).then((data) => {
+				if(data.status === 200) {
+					alert("Added successfully, you can now login..");
+				}
+				else {
+					console.log(data.status.data);
+				}
+			})
+
+		} else {
+			Problematics.map(v => {
+				setErrorContent(v.index, v.errMsg);
+			});
+		}
+	}
+
+</script>
+
+
+</html>

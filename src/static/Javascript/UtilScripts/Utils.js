@@ -1,0 +1,1 @@
+const getInputValue = (id) => document.getElementById(id).value;

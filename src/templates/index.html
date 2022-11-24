@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script type="text/javascript" src="{{url_for('static', filename='Javascript/Tailwind/tailwind.js')}}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='Javascript/Tailwind/tailwind.config.js')}}"></script>
+
+	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/main.css')}}">
+	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/global.css')}}">	
+	<title> Moody </title>
+</head>
+
+<body class="w-screen flex flex-col justify-start items-center">
+	<nav class="flex flex-row justify-around rounded-lg items-center fixed top-2 p-4 left-1/2 -translate-x-1/2 w-full">
+		<a class="LINK bg-white p-2 text-center mx-4 text-lg font-semibold text-black flex justify-center items-center flex-col rounded-lg shadow-md font-mono" href="/"> MOODY </a>
+		<div class="flex flex-row justify-between items-center">
+			<a class="LINK mx-4 text-lg font-base text-white flex justify-center items-center flex-col" href="/Home"> <p>Home</p><div class="h-[1px] bg-sky-500"> </div> </a>
+			<a class="LINK mx-4 text-lg font-base text-white flex justify-center items-center flex-col" href="/about"> <p>About</p><div class="h-[1px] bg-sky-500"> </div> </a>
+			<a class="LINK mx-4 text-lg font-base text-white flex justify-center items-center flex-col" href="/services"> <p>Services</p><div class="h-[1px] bg-sky-500"> </div> </a>
+		</div>
+	</nav>
+
+	<div class="app h-screen w-[90%] sm:w-[1000px] flex flex-col justify-start items-center">
+		<div class="hero h-full w-full flex flex-col justify-center items-center">
+
+			<h1 class="text-white font-bold text-3xl my-4"> Wellcome to Moody, great place to buy degital albums! </h1>
+			<p class="text-white font-thin text-xl my-2"> Make an account to get a balance of 20$. </p>
+
+			<a  class="text-white my-2 px-4 py-2 bg-sky-900 hover:bg-sky-700 hover:shadow rounded-md transition" href="/signup"> Make an account for free ! </a>
+			<a  class="text-white my-2 px-4 py-2 border border-white rounded-md shadow-md" href="/login"> Already have one!? </a>	
+				
+		</div>
+	</div>
+
+	
+</body>
+</html>

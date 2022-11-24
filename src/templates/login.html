@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title> Login page for my app. </title>
+	
+	<script type="text/javascript" src="{{url_for('static', filename='Javascript/Tailwind/tailwind.js')}}"></script>
+	
+	<script type="text/javascript" src="{{url_for('static', filename='Javascript/Tailwind/tailwind.config.js')}}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='Javascript/UtilScripts/Utils.js')}}"></script>
+
+	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/global.css')}}">
+
+</head>
+
+<body class="w-screen h-screen flex items-center justify-center font-mono">
+
+
+	<form class="flex flex-row justify-between items-center w-11/12 sm:w-[700px] rounded-md shadow-subtle">
+
+		<div class="flex flex-col w-1/2 justify-center p-4 px-6">
+			
+			<label class="my-1 w-full flex flex-col justify-center items-start">
+				Email
+				<input name="Email" class="focus:border-sky-400 py-2 px-2 w-full outline-none my-2 rounded border border-black" type="email" placeholder="Example@mail.com" id="Email">
+				<p class="validator text-red-600 text-sm font-normal"></p>
+			</label>
+			
+			<label class="my-1 w-full flex flex-col justify-center items-start">
+				password
+				<input name="Password" class="focus:border-sky-400 py-2 px-2 w-full outline-none my-2 rounded border border-black" type="password" id="Password" placeholder="Better be secure tho :)">
+				<p class="validator text-red-600 text-sm font-normal"></p>
+			</label>
+
+			<input id="Submit" class="hover:bg-blue-700 bg-blue-900 transition-all duration-500 my-2 w-[100px] rounded border-box py-2 px-4 text-white cursor-pointer hover:shadow-md" type="submit" value="Login">
+			
+
+		</div>
+
+		<img src="{{url_for('static', filename='img/flowers.jpg')}}" class="w-[250px] rounded-r-md" alt="Image">
+	</form>
+
+	<script type="text/javascript">
+		
+		const submitButton = document.getElementById("Submit");
+		const validators = document.getElementsByClassName("validator");
+		const setErrorContent = (index, text) => validators[index].textContent = text;
+
+		submitButton.onclick = (e) => {
+			e.preventDefault();
+			var Problematics = [];
+
+			const state = {
+				Email: getInputValue("Email"),
+				Password: getInputValue("Password")
+			}
+
+			Object.keys(state).map((k, i) => {
+				if(!state[k])
+					Problematics.push({index: i, errMsg: "This field can not be empty!!"})
+					return
+			});
+
+			if(Problematics.length === 0) {
+				fetch("/login", {
+					headers: {
+						"content-type": "application/json",
+					},
+					method: "POST",
+					body: JSON.stringify({
+						Email: getInputValue("Email"),
+						Password: getInputValue("Password")
+					})
+				}).then((res) => {
+					
+					return res.json()
+					
+				}).then((Json) => {
+					if(Json.status.code === 200) {
+						window.location.href = `/profile`;
+					} else {
+						console.log(Json.status.code);
+					}
+				})	
+			} else {
+				
+				Problematics.map((v) => {
+					setErrorContent(v.index, v.errMsg)
+				});
+			}
+		}
+
+	</script>
+
+</body>
+</html>

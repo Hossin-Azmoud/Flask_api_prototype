@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title> {{ User.Name }} - Profile </title>
+	<script type="text/javascript" src="{{url_for('static', filename='Javascript/Tailwind/tailwind.js')}}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='Javascript/Tailwind/tailwind.config.js')}}"></script>
+
+	<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/global.css')}}">
+	
+</head>
+<body class="p-0 m-0 w-screen flex flex-col justify-start items-center">
+
+	<div class="app h-screen w-[90%] sm:w-[700px] flex flex-col justify-start items-start">  
+		
+		<div class="top-0 z-0 left-0 w-full relative 	h-32 bg-slate-300">
+		</div>
+		
+	<!-- 	<button class="bg-black relative left-10 bottom-12 text-white rounded-full">
+				edit profile
+		</button> -->
+
+		<div class="flex flex-col justify-center items-center relative left-4 bottom-12">
+			
+			<img src="{{url_for('static', filename='img')}}/{{ User.img }}" alt="user avatar" class="rounded-md w-24 h-24 my-2">
+			
+			<h5 class="font-bold text-lg text-slate-700"> {{ User.Name }} </h5>
+		</div>
+
+		<p class="font-normal text-slate-500 text-base my-2"> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+		quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+		consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+		cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+		proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
+
+		<p class="text-slate-400 font-thin">
+			Casablanca, Morrocco
+		</p>
+
+		<p class="text-slate-400 font-thin my-1">
+			{{ User.Email }}
+		</p>
+
+		<button id="x" class="bg-slate-300 font-semibold text-neutral-700 p-3 text-sm rounded-full my-1">
+			Display User Token
+		</button>
+		<a href="/Logout" class="bg-rose-500 hover:bg-rose-400 text-white p-3 rounded">
+			logout
+		</a>
+	</div>
+
+	<script>
+		
+		document.getElementById('x').onclick = () => {
+			alert("{{ User.UserToken }}");
+		}
+
+	</script>
+
+</body>
+</html>

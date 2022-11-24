@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title> Moody </title>
+</head>
+<body>
+
+	<form id="form">
+		<input type="text" name="q" id="q">
+		<input type="Submit" name="submit" value="search">
+	</form>
+
+	<script lang="javascript">
+		
+		const searchField = document.getElementById("q");
+		const form = document.getElementById("form");
+		let Users = null;
+		
+		window.onload = () => {
+			fetch("/query", {
+				headers: {
+					"content-type": "application/json",
+				},
+				method: "GET"
+			})
+			.then((res) => {
+				return res.json()
+			})
+			.then((data) => {
+				return data;
+			})
+			.finally((data) => {
+				Users = data;
+			})
+		}
+
+		form.onsubmit = (e) => {
+			e.preventDefault();
+			FetchData(searchField.value);
+			console.log(Users);
+		};
+
+		const FetchData = async (q) => {
+			fetch(`/query?query=${q}`, {
+				headers: {
+					"content-type": "application/json",
+				},
+				method: "GET"
+			})
+			.then((res) => {
+				return res.json()
+			})
+			.finally((data) => {
+				Users = data;
+			})
+		}
+
+		searchField.onkeydown = (e) => {
+			if(e.target.value) {
+				FetchData(e.target.value);
+			}
+		}
+
+
+	</script>
+</body>
+</html>
