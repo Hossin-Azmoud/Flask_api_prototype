@@ -48,8 +48,6 @@ Api_DB_HANDLER = createNewDbObject()
 @app.route("/")
 def index():
 	return render_template("index.html")
-
-
 def getUserByAT(T: str):
 	
 	Api_DB_HANDLER.connect()
@@ -57,7 +55,6 @@ def getUserByAT(T: str):
 	if Db_res.code == 200:
 		return Db_res.data
 	return None
-
 def getAccessToken():
 	sessionT = None
 	AccessToken = request.cookies.get("Access-Token")
@@ -70,11 +67,8 @@ def getAccessToken():
 			print(AccessToken["T"])
 			return AccessToken["T"]
 	return None
-
 def MakeServerResponse(code, data) -> str: 
 	return response(code, data).makeResponse()
-
-
 @app.route("/login", methods=["POST"])
 def login():
 	if request.method == "GET":
@@ -111,7 +105,6 @@ def login():
 			return dumps(response)
 
 		return dumps(User.makeResponse())
-
 @app.route("/signup", methods=["POST"])
 def signUp():	
 	data = ConstructModel(request.json)
@@ -125,7 +118,6 @@ def signUp():
 		User["Token"] = EncodeJWT(JWT_SECRET, {"T": AccessToken})
 		return MakeServerResponse(200, User)
 	return dumps(User.makeResponse())
-
 @app.route("/UpdateUserImage", methods=["POST"])
 def UpdateUserImage():
 	# TODO: Require the access token in this route for more security ;)
@@ -143,7 +135,6 @@ def UpdateUserImage():
 		return MakeServerResponse(202, "Encountered an error!")
 
 	return MakeServerResponse(500, "The get method is not Implemented")
-
 @app.route("/UpdateUserBackground", methods=["POST"])
 def UpdateUserBg():
 	# TODO: Require the access token in this route for more security ;)
@@ -160,7 +151,6 @@ def UpdateUserBg():
 		return MakeServerResponse(202, "Encountered an error!")
 
 	return MakeServerResponse(500, "The get method is not Implemented")
-
 @app.route("/query", methods=["GET"])
 def queryUsers():
 	DB_HANDLER = createNewDbObject()
@@ -171,7 +161,6 @@ def queryUsers():
 		return filteredUserList(q, users)
 	else:
 		return users
-
 @app.route("/MakePost", methods=["POST"])
 def createPost():
 	""" 
@@ -190,7 +179,6 @@ def createPost():
 		return dumps(res.makeResponse())
 
 	return dumps({"data": NOT_EMP})
-
 @app.route("/GetAllPosts", methods=["GET"])
 def getAllPosts():
 	""" 
@@ -202,7 +190,6 @@ def getAllPosts():
 	DB_HANDLER.connect()
 	Posts = DB_HANDLER.GetAllPosts()
 	return MakeServerResponse(200, Posts)
-
 @app.route("/Update", methods=["POST"])
 def Update():
 	# TODO: Require the access token in this route for more security ;)
@@ -228,9 +215,6 @@ def Update():
 			return MakeServerResponse(500, "Data was not Modefied!")
 
 	return "Wrong Method: get is not NotImplemented"
-
-
-
 @app.route("/<user_id>", methods=["GET"])
 def GetUserById(user_id):
 	DB_HANDLER = createNewDbObject()
@@ -239,9 +223,6 @@ def GetUserById(user_id):
 	if User:
 		return MakeServerResponse(200, User)
 	return MakeServerResponse(500, "This user does not exist.")
-
-
-
 @app.route("/getUserPosts", methods=["GET"])
 def getUserPosts():
 
