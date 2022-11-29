@@ -85,8 +85,8 @@ class DB:
 				"id_": row[0],
 				"UserName": row[2],
 				"img": row[5],
-				"bio": row[6],
-				"bg": row[7],
+				"bg": row[6],
+				"bio": row[7],
 				"addr": row[8]
 			}
 
@@ -94,16 +94,36 @@ class DB:
 			return None
 	
 	def UpdateBio(self, newValue, id_):
-		res = self.Update("BIO", newValue, id_)
-		return res
+		assert self.isOpen, "The db is not yet connected, Try again"
+		row = self.cursor.execute("UPDATE USERS SET BIO=? WHERE ID=?", (newValue, id_)).fetchone()
+		self.commit()
+		return row
 
-	def UpdateBackgound(self, newValue, id_):
-		res = self.Update("BG", newValue, id_)
-		return res
 
-	def UpdateImg(self, newValue, id_):
-		res = self.Update("IMG", newValue, id_)
-		return res
+
+	def UpdateBackgound(self, newValue, id_) -> bool:
+		assert self.isOpen, "The db is not yet connected, Try again"
+
+		try:
+			row = self.cursor.execute("UPDATE USERS SET BG=? WHERE ID=?", (newValue, id_)).fetchone()
+			self.commit()
+			return True
+		except Exception as e:
+			print(e)
+
+		return False
+		
+	def UpdateImg(self, newValue, id_) -> bool:
+		assert self.isOpen, "The db is not yet connected, Try again"
+		try:
+			row = self.cursor.execute("UPDATE USERS SET IMG=? WHERE ID=?", (newValue, id_))
+			print(row)
+			self.commit()
+			return True
+		except Exception as e:
+			print(e)
+
+		return False
 
 	def UpdateUserName(self, newValue, id_):
 		res = self.Update("USERNAME", newValue, id_)
@@ -189,15 +209,15 @@ class DB:
 	def GetAllUsers(self):
 		assert self.isOpen, "The db is not yet connected, Try again"
 		rows = self.conn.execute("SELECT * FROM USERS").fetchall()
-		
+
 		if rows:
 			for i, row in enumerate(rows):
 				rows[i] = {
 					"id_": row[0],
 					"UserName": row[2],
 					"img": row[5],
-					"bio": row[6],
-					"bg": row[7],
+					"bg": row[6],
+					"bio": row[7],
 					"addr": row[8]
 				}
 
@@ -208,8 +228,7 @@ class DB:
 	def GetUserByToken(self, T: str):
 		assert self.isOpen, "The db is not yet connected, Try again"
 		T = b64decode(T).decode()
-		row = self.cursor.execute("SELECT * FROM USERS WHERE TOKEN=?", (T, )).fetchone()
-		
+		row = self.cursor.execute("SELECT * FROM USERS WHERE TOKEN=?", (T, )).fetchone()		
 		if row:
 			
 			return response(200, {
@@ -217,8 +236,8 @@ class DB:
 				"Email": row[1],
 				"UserName": row[2],
 				"img": row[5],
-				"bio": row[6],
-				"bg": row[7],
+				"bg": row[6],
+				"bio": row[7],
 				"addr": row[8]
 			})
 
@@ -280,8 +299,9 @@ class DB:
 		if not self.CheckUserExistence(Data.Email):
 			try:
 				Token: str = self.TokenGen(Data.Email)
-				self.conn.execute("INSERT INTO USERS(EMAIL, USERNAME, PASSWORDHASH, TOKEN, IMG, BG, BIO, ADDR) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (Data.Email, Data.UserName, Data.hashedPWD, Token, Data.IMG,Data.Bio, Data.bg, Data.addr))
+				self.conn.execute("INSERT INTO USERS(EMAIL, USERNAME, PASSWORDHASH, TOKEN, IMG, BIO, BG, ADDR) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", (Data.Email, Data.UserName, Data.hashedPWD, Token, Data.IMG,Data.Bio, Data.bg, Data.addr))
 				self.commit()
+				
 				logging.info("Added new user: {200}")
 				
 				return response(200, {

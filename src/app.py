@@ -1,3 +1,4 @@
+
 from flask import (
 	Flask, 
 	request, 
@@ -11,7 +12,7 @@ from flask import (
 from flask_cors import CORS
 from json import dumps
 from pathlib import Path
-
+from time import sleep
 from DataBaseModel import (
 	ConstructModel,
 	constructDB,
@@ -32,6 +33,8 @@ from Constants import (
 	JWT_SECRET
 )
 
+def createNewDbObject(): return constructDB(Path(DB_PATH))
+
 app = Flask(__name__)
 app.secret_key = APP_SECRET
 
@@ -39,17 +42,18 @@ app.secret_key = APP_SECRET
 CORS(app)
 PORT = 5000
 NOT_EMP: str = "<h1 style=\"color: red;\"> Route still NotImplemented </h1>"
+# More speed I think
+Api_DB_HANDLER = createNewDbObject()
 
 @app.route("/")
 def index():
 	return render_template("index.html")
 
-def createNewDbObject(): return constructDB(Path(DB_PATH))
 
 def getUserByAT(T: str):
-	DB_HANDLER = createNewDbObject()
-	DB_HANDLER.connect()
-	Db_res = DB_HANDLER.GetUserByToken(T)
+	
+	Api_DB_HANDLER.connect()
+	Db_res = Api_DB_HANDLER.GetUserByToken(T)
 	if Db_res.code == 200:
 		return Db_res.data
 	return None
@@ -78,6 +82,7 @@ def login():
 		if AccessToken:
 			return dumps({"T": AccessToken})
 		return "Access denied."
+		
 	else:
 		if "AccessToken" in request.json:
 			Jwt_token = request.json["AccessToken"]
@@ -90,6 +95,7 @@ def login():
 			elif isinstance(data, str):
 				# Return an  error code and the error message to the client.
 				return MakeServerResponse(202, data)
+
 		data = ConstructModel(request.json)
 		DB_HANDLER = createNewDbObject()
 		DB_HANDLER.connect()
@@ -107,13 +113,11 @@ def login():
 		return dumps(User.makeResponse())
 
 @app.route("/signup", methods=["POST"])
-def signUp():
-	print(request.json)
-	
+def signUp():	
 	data = ConstructModel(request.json)
-	DB_HANDLER = createNewDbObject()
-	DB_HANDLER.connect()
-	User = DB_HANDLER.AddNewUser(data)
+
+	Api_DB_HANDLER.connect()
+	User = Api_DB_HANDLER.AddNewUser(data)
 
 	if User.code == 200:
 		AccessToken = User.data["T"]
@@ -121,6 +125,41 @@ def signUp():
 		User["Token"] = EncodeJWT(JWT_SECRET, {"T": AccessToken})
 		return MakeServerResponse(200, User)
 	return dumps(User.makeResponse())
+
+@app.route("/UpdateUserImage", methods=["POST"])
+def UpdateUserImage():
+	# TODO: Require the access token in this route for more security ;)
+	if request.method == "POST":
+		
+		data = request.json
+		if "id_" in data:
+			if "img" in data:
+				DB_HANDLER = createNewDbObject()
+				DB_HANDLER.connect()
+				res = DB_HANDLER.UpdateImg(data["img"], data["id_"])
+				if res:
+					return MakeServerResponse(200, res)
+
+		return MakeServerResponse(202, "Encountered an error!")
+
+	return MakeServerResponse(500, "The get method is not Implemented")
+
+@app.route("/UpdateUserBackground", methods=["POST"])
+def UpdateUserBg():
+	# TODO: Require the access token in this route for more security ;)
+	if request.method == "POST":
+		data = request.json
+		if "id_" in data:
+			if "img" in data:
+				DB_HANDLER = createNewDbObject()
+				DB_HANDLER.connect()
+				res = DB_HANDLER.UpdateBackgound(data["img"], data["id_"])
+				if res:
+					return MakeServerResponse(200, res)
+
+		return MakeServerResponse(202, "Encountered an error!")
+
+	return MakeServerResponse(500, "The get method is not Implemented")
 
 @app.route("/query", methods=["GET"])
 def queryUsers():
@@ -142,6 +181,7 @@ def createPost():
 		Postimg: base64EncodedBytes,
 		PostText: str
 	"""
+	# TODO: Require the access token in this route for more security ;)
 
 	if request.method == "POST":
 		DB_HANDLER = createNewDbObject()
@@ -165,6 +205,7 @@ def getAllPosts():
 
 @app.route("/Update", methods=["POST"])
 def Update():
+	# TODO: Require the access token in this route for more security ;)
 	"""
 	this routes expects this format:
 		json = { 
@@ -203,18 +244,18 @@ def GetUserById(user_id):
 
 @app.route("/getUserPosts", methods=["GET"])
 def getUserPosts():
-	"""
 
+	"""
 	Getting a user's posts.. 
 	Waiting for this json entries:
 		id_: int
-
 	"""
 	
 	if "id_" in request.values:
 		id_ = request.values["id_"]
 		DB_HANDLER = createNewDbObject()
 		DB_HANDLER.connect()
+		
 		posts = DB_HANDLER.GetUserPosts(id_)
 
 		if posts:
