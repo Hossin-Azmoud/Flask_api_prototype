@@ -118,6 +118,7 @@ def signUp():
 		User["Token"] = EncodeJWT(JWT_SECRET, {"T": AccessToken})
 		return MakeServerResponse(200, User)
 	return dumps(User.makeResponse())
+	
 @app.route("/UpdateUserImage", methods=["POST"])
 def UpdateUserImage():
 	# TODO: Require the access token in this route for more security ;)
@@ -153,14 +154,17 @@ def UpdateUserBg():
 	return MakeServerResponse(500, "The get method is not Implemented")
 @app.route("/query", methods=["GET"])
 def queryUsers():
+	
 	DB_HANDLER = createNewDbObject()
 	DB_HANDLER.connect()
 	users = DB_HANDLER.GetAllUsers()
-	if "query" in request.values:
-		q = request.values["query"]
-		return filteredUserList(q, users)
+	if "q" in request.values:
+		q = request.values["q"]
+		users = filteredUserList(q, users)
+		return MakeServerResponse(200, users)
 	else:
-		return users
+		return MakeServerResponse(200, users)
+
 @app.route("/MakePost", methods=["POST"])
 def createPost():
 	""" 
